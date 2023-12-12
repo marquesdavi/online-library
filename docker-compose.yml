@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  # MySQL service
+  mysql:
+    image: mysql:latest
+    container_name: library-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 102030
+      MYSQL_DATABASE: library
+      MYSQL_USER: libprod
+      MYSQL_PASSWORD: 102030
+    ports:
+      - "3307:3306"
+    networks:
+      - library-network
+
+  # Spring Boot application
+  library-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: library-app
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/library
+      SPRING_DATASOURCE_USERNAME: libprod
+      SPRING_DATASOURCE_PASSWORD: 102030
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8080:8080"
+    networks:
+      - library-network
+    command: [ "./wait-for-it.sh", "mysql:3306", "java", "-Dspring.profiles.active=dev", "-jar", "/app/app.jar" ]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV:-production}
+    networks:
+      - library-network
+    volumes:
+      - ./path/to/your/app:/app
+    command: >
+      sh -c "npm install && npm run build:${NODE_ENV}"
+
+networks:
+  library-network:
+    driver: bridge

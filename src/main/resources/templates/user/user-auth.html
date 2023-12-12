@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Home Page</title>
+    <!-- Adicione o link para o CDN do Tailwind CSS -->
+    <link th:href="@{/main.css}" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col min-h-screen items-center justify-center bg-gray-900">
+
+<main class="relative min-h-screen w-full bg-gray-900">
+    <div class="p-6">
+        <div th:if="${param.fail}" class="bg-transparent text-center fixed top-16 right-0 py-4 lg:px-4" id="failAle">
+            <div class="p-2 bg-orange-800 items-center text-orange-100 leading-none rounded-full flex inline-flex" role="alert">
+                <span class="flex rounded-full bg-orange-500 uppercase px-2 py-1 text-xs font-bold mr-3">FAIL</span>
+                <span class="font-semibold mr-2 text-left flex-auto">Username or email already exists!</span>
+                <svg class="fill-current opacity-75 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+            </div>
+        </div>
+
+        <div class="absolute left-1/2 top-1/2 mx-auto max-w-sm -translate-x-1/2 -translate-y-1/2 transform space-y-4 text-center">
+            <!-- register content -->
+            <div>
+                <form method="post" th:action="@{/register/save}" th:object="${user}" class="space-y-4">
+                    <header class="mb-3 text-2xl font-bold text-white">Create your profile</header>
+                    <div class="w-full rounded-2xl bg-gray-50 px-4 ring-2 ring-gray-200 focus-within:ring-blue-400">
+                        <input
+                                name="username"
+                                type="text"
+                                placeholder="Username"
+                                class="my-3 w-full border-none bg-transparent outline-none focus:outline-none"
+                                th:field="*{username}"
+                        />
+                    </div>
+
+                    <div class="w-full flex flex-row gap-3.5">
+                        <div class="rounded-2xl bg-gray-50 px-4 ring-2 ring-gray-200 focus-within:ring-blue-400">
+                            <input
+                                    name="firstName"
+                                    type="text"
+                                    placeholder="First name"
+                                    class="my-3 w-full border-none bg-transparent outline-none focus:outline-none"
+                                    th:field="*{firstName}"
+                            />
+                        </div>
+                        <div class="rounded-2xl bg-gray-50 px-4 ring-2 ring-gray-200 focus-within:ring-blue-400">
+                            <input
+                                    name="lastName"
+                                    type="text"
+                                    placeholder="Last name"
+                                    class="my-3 w-full border-none bg-transparent outline-none focus:outline-none"
+                                    th:field="*{lastName}"
+                            />
+                        </div>
+                    </div>
+                    <div class="w-full rounded-2xl bg-gray-50 px-4 ring-2 ring-gray-200 focus-within:ring-blue-400">
+                        <input
+                                name="email"
+                                type="text"
+                                placeholder="Email"
+                                class="my-3 w-full border-none bg-transparent outline-none focus:outline-none"
+                                th:field="*{email}"
+                        />
+                    </div>
+                    <div class="w-full rounded-2xl bg-gray-50 px-4 ring-2 ring-gray-200 focus-within:ring-blue-400">
+                        <input
+                                name="password"
+                                type="password"
+                                placeholder="Password"
+                                class="my-3 w-full border-none bg-transparent outline-none focus:outline-none"
+                                th:field="*{password}"
+                        />
+                    </div>
+                    <button
+                            type="submit"
+                            class="w-full rounded-2xl border-b-4 border-b-blue-600 bg-indigo-700 py-3 font-bold text-white hover:bg-blue-400 active:translate-y-[0.125rem] active:border-b-blue-400"
+                            th:href="@{/register}"
+                    >
+
+                        CREATE ACCOUNT
+                    </button>
+                </form>
+            </div>
+            <footer>
+
+                <div class="mt-8 text-sm text-gray-200">
+                    Already have an account?
+                    <a href="/login" class="font-bold text-white">Sign-in</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+</main>
+
+<script th:if="${param.fail}">
+    setTimeout(function () {
+        document.getElementById("failAle").style.display = "none";
+    }, 5000);
+    function hide(){
+        document.getElementById("failAle").style.display = "none";
+    }
+</script>
+
+</body>
+</html>

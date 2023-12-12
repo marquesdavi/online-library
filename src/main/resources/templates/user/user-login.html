@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Home Page</title>
+    <!-- Adicione o link para o CDN do Tailwind CSS -->
+    <link th:href="@{/main.css}" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col min-h-screen items-center justify-center bg-gray-900">
+
+<main class="relative min-h-screen w-full bg-gray-900">
+    <div class="p-6" >
+        <div th:if="${param.error}" class="bg-transparent text-center fixed top-16 right-0 py-4 lg:px-4" id="errorAle">
+            <div class="p-2 bg-red-800 items-center text-red-100 leading-none rounded-full flex inline-flex" role="alert">
+                <span class="flex rounded-full bg-red-500 uppercase px-2 py-1 text-xs font-bold mr-3">OOPS!</span>
+                <span class="font-semibold mr-2 text-left flex-auto">We got an error...</span>
+                <svg class="fill-current opacity-75 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+            </div>
+        </div>
+
+        <div th:if="${param.logout}" class="bg-transparent text-center fixed top-16 right-0 py-4 lg:px-4" id="logoutAle">
+            <div class="p-2 bg-cyan-800 items-center text-cyan-100 leading-none rounded-full flex inline-flex" role="alert">
+                <span class="flex rounded-full bg-cyan-500 uppercase px-2 py-1 text-xs font-bold mr-3">OUT</span>
+                <span class="font-semibold mr-2 text-left flex-auto">You're logged out!</span>
+                <svg class="fill-current opacity-75 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+            </div>
+        </div>
+        <div class="absolute left-1/2 top-1/2 mx-auto max-w-sm -translate-x-1/2 -translate-y-1/2 transform space-y-4 text-center">
+            <!-- login content -->
+            <div>
+                <form method="post" th:action="@{/login}" class="space-y-4">
+                    <input type="hidden" name="loginProcessingUrl" value="{{ '/login-processing' }}" />
+                    <header class="mb-3 text-2xl font-bold text-white">Log in</header>
+                    <div class="w-full rounded-2xl bg-gray-50 px-4 ring-2 ring-gray-200 focus-within:ring-blue-400">
+                        <input
+                                id="username"
+                                type="text"
+                                placeholder="Username"
+                                class="my-3 w-full border-none bg-transparent outline-none focus:outline-none"
+                                name="username">
+                    </div>
+                    <div class="flex w-full items-center space-x-2 rounded-2xl bg-gray-50 px-4 ring-2 ring-gray-200 focus-within:ring-blue-400">
+                        <input
+                                id="password"
+                                type="password"
+                                placeholder="Password"
+                                class="my-3 w-full border-none bg-transparent outline-none"
+                                name="password">
+                        <a href="#" class="font-medium text-gray-400 hover:text-gray-500">FORGOT?</a>
+                    </div>
+                    <button type="submit" value="Log in" class="w-full rounded-2xl border-b-4 border-b-blue-600 bg-indigo-700 py-3 font-bold text-white hover:bg-blue-400 active:translate-y-[0.125rem] active:border-b-blue-400">
+                        LOG IN
+                    </button>
+                </form>
+            </div>
+
+            <footer>
+                <div class="mt-8 text-sm text-gray-200">
+                    Don't have an account?
+                    <a href="/register" class="font-bold text-white">Sign-up</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+</main>
+
+<script>
+    const loginForm = document.getElementById('loginForm');
+    const loginProcessingUrl = document.getElementById('loginProcessingUrl').value;
+
+    loginForm.addEventListener('submit', function(event) {
+        if (!event.target.checkValidity()) return; // Prevent submission if form is invalid
+
+        fetch('/login', {
+            method: 'POST',
+            body: new FormData(loginForm)
+        }).then(response => {
+            if (response.ok) {
+                // Successful login, redirect to default URL
+                window.location.href = '/';
+            } else {
+                // Login failed, redirect to login-processing
+                loginForm.action = loginProcessingUrl;
+                loginForm.submit();
+            }
+        });
+    });
+</script>
+
+<script th:if="${param.error}">
+    setTimeout(function () {
+        document.getElementById("errorAle").style.display = "none";
+    }, 5000);
+    function hide(){
+        document.getElementById("errorAle").style.display = "none";
+    }
+</script>
+
+<script th:if="${param.logout}">
+    setTimeout(function () {
+        document.getElementById("logoutAle").style.display = "none";
+    }, 5000);
+    function hide(){
+        document.getElementById("logoutAle").style.display = "none";
+    }
+</script>
+
+</body>
+</html>
