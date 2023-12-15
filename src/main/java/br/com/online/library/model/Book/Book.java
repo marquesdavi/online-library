@@ -5,6 +5,9 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @Table(name = "book")
@@ -42,4 +45,14 @@ public class Book {
         this.category = category;
         this.code = code;
     }
+
+    public String stringMatch(String stringToMatch){
+
+        int tPos = 25;
+        StringBuilder strModel = new StringBuilder();
+
+
+        return strModel.toString();
+    }
+
 }
