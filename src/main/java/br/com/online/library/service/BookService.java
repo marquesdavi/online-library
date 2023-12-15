@@ -9,17 +9,57 @@ import br.com.online.library.util.CodeGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class BookService {
     private IBookRepository repository;
-    public BookService(IBookRepository repository){
+
+    public BookService(IBookRepository repository) {
         this.repository = repository;
     }
 
-    public void createBook(RegisterBookDTO book){
+    public static Map<Integer, Object> sizeFilter(ArrayList<Book> items) {
+        int rowsPerPage = 2;
+        int booksPerRow = 3;
+
+        int pagesCount = (items.size() + rowsPerPage * booksPerRow - 1) / (rowsPerPage * booksPerRow);
+
+        ArrayList<ArrayList<ArrayList<Book>>> books = new ArrayList<>();
+        int startPos = 0;
+
+        for (int i = 0; i < pagesCount; i++) {
+            ArrayList<ArrayList<Book>> page = new ArrayList<>();
+
+            for (int j = 0; j < rowsPerPage; j++) {
+                int fromIndex = startPos;
+                int toIndex = Math.min(startPos + booksPerRow, items.size());
+                ArrayList<Book> row = new ArrayList<>(items.subList(fromIndex, toIndex));
+                page.add(row);
+                startPos += booksPerRow;
+                if (startPos >= items.size()) {
+                    break;
+                }
+            }
+
+            books.add(page);
+        }
+
+        ArrayList<Integer> pages = new ArrayList<>();
+        for (int i = 0; i < pagesCount; i++) {
+            pages.add(i + 1);
+        }
+
+        Map<Integer, Object> result = new HashMap<>();
+        result.put(0, books);
+        result.put(1, pages);
+        return result;
+    }
+
+    public void createBook(RegisterBookDTO book) {
         boolean categoryMatch = Arrays
                 .stream(BookCategory.values())
                 .anyMatch(n -> n.toString().equals(book.category()));
@@ -35,18 +75,18 @@ public class BookService {
         repository.save(newBook);
     }
 
-    public List<Book> list(){
+    public ArrayList<Book> list() {
         return repository.findAll();
     }
 
     @Transactional
-    public void delete(String code){
+    public void delete(String code) {
         repository.deleteByCode(code);
     }
 
     @Transactional
-    public void update(String code, String field, String value){
-        if (field.equals("title")){
+    public void update(String code, String field, String value) {
+        if (field.equals("title")) {
             repository.updateTitleByCode(code, value);
         } else if (field.equals("description")) {
             repository.updateDescriptionByCode(code, value);
@@ -57,7 +97,7 @@ public class BookService {
         }
     }
 
-    public BookResponseDTO details(String code){
+    public BookResponseDTO details(String code) {
         var book = repository.findBookByCode(code);
 
         return new BookResponseDTO(

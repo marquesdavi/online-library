@@ -40,14 +40,14 @@ public class SecurityConfiguration {
                         authz.requestMatchers("/register").permitAll()
                                 .requestMatchers("/register/save").permitAll()
                                 .requestMatchers("/login").permitAll()
-                                .requestMatchers("/main.css").permitAll()
                                 .requestMatchers("/**").authenticated()
                                 .requestMatchers("/borrow**").authenticated()
                                 .requestMatchers("/me/borrow").authenticated()
+                                .requestMatchers("/favicon.ico").authenticated()
                                 .anyRequest().authenticated()
                 ).formLogin(formLogin -> formLogin
                         .loginPage("/login")
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/1")
                         .failureHandler(this::redirectAfterFailure)
                         .permitAll()
                 ).exceptionHandling(exceptionHandling ->

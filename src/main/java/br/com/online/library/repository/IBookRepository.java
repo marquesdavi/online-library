@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import java.util.*;
 
 public interface IBookRepository extends JpaRepository<Book, Integer> {
     @Modifying
@@ -29,4 +30,6 @@ public interface IBookRepository extends JpaRepository<Book, Integer> {
     void updateCategoryByCode(@Param("code")String code, @Param("value")String value);
 
     Book findBookByCode(String code);
+
+    ArrayList<Book> findAll();
 }
