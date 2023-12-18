@@ -12,7 +12,7 @@
     <div x-data="{ open: false }"
          class="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
         <div class="p-4 flex flex-row items-center justify-between">
-            <a href="/" class="text-white text-xl font-bold flex items-center justify-center gap-2">
+            <a href="/1" class="text-white text-xl font-bold flex items-center justify-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" height="18" width="16" viewBox="0 0 448 512">
                     <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
                     <path fill="#ffffff"
@@ -70,74 +70,99 @@
 </div>
 
 
-<div class="container rounded-lg box-border p-3 py-5">
+<div class="container rounded-lg box-border p-3 py-5 flex flex-col md:min-w-[30%] md:max-w-[40%] items-center">
 
-    <div class="container mb-4 mt-3">
-        <div class="container mb-4 text-white hover:text-gray-300">
-            <a href="/" class="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512">
-                    <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
-                    <path fill="#ffffff"
-                          d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/>
-                </svg>
-                <p>Voltar para o início</p>
-            </a>
-        </div>
 
-        <div>
-            <a th:href="@{/delete(code=${book.code})}">
-                <button type="button" id="delete-button"
-                        class="px-4 py-2 rounded bg-red-500 text-white hover:bg-teal-700 focus:outline-none transition-colors">
-                    Delete
-                </button>
-            </a>
 
-            <a th:href="@{/update/field(code=${book.code})}" class="m-6">
+    <div class="mb-4 mt-3 flex flex-row bg-transparent w-full items-center justify-between rounded-2xl gap-3">
+        <a th:href="@{/{page}(page = ${rootPage})}"
+           class="bg-indigo-700 text-white hover:bg-indigo-800 w-10 h-10 flex justify-center items-center rounded-full">
+
+            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512">
+                <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                <path fill="#ffffff"
+                      d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/>
+            </svg>
+        </a>
+
+        <div class="m-3 gap-5">
+
+            <a th:href="@{/update/field(code=${book.code})}">
                 <button type="button" id="edit-button"
-                        class="px-4 py-2 rounded bg-teal-400 text-white hover:bg-teal-700 focus:outline-none transition-colors">
+                        class="px-4 py-2 rounded-lg bg-amber-500 text-white hover:bg-teal-700 focus:outline-none transition-colors">
                     Edit
                 </button>
             </a>
 
             <a th:href="@{/borrow(bookId=${book.id})}">
                 <button type="button" id="borrow-button"
-                        class="px-4 py-2 rounded bg-teal-400 text-white hover:bg-teal-700 focus:outline-none transition-colors">
+                        class="px-4 py-2 rounded-lg bg-teal-400 text-white hover:bg-teal-700 focus:outline-none transition-colors">
                     Borrow
                 </button>
             </a>
         </div>
     </div>
-    <table class="w-full py-2 mt-5 bg-indigo-900 rounded-lg overflow-hidden shadow-lg">
-        <thead class="text-white">
-        <tr class="bg-indigo-700 flex flex-col sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
-            <th class="p-3 text-left">Code</th>
-            <th class="p-3 text-left">Title</th>
-            <th class="p-3 text-left">Description</th>
-            <th class="p-3 text-left">Author</th>
-            <th class="p-3 text-left">Category</th>
-        </tr>
-        </thead>
-        <tbody class="flex-1 sm:flex-none text-white">
-        <tr class="flex flex-col sm:table-row mb-2 sm:mb-0">
-            <td class="border border-indigo-700 hover:bg-indigo-500 p-3 truncate">
-                <span th:text="${book.code()}">Code</span>
-            </td>
-            <td class="border border-indigo-700 hover:bg-indigo-500 p-3">
-                <span th:text="${book.title()}">Title</span>
-            </td>
-            <td class="border border-indigo-700 hover:bg-indigo-500 p-3 truncate">
-                <span th:text="${book.description()}">Description</span>
-            </td>
-            <td class="border border-indigo-700 hover:bg-indigo-500 p-3 truncate">
-                <span th:text="${book.author()}">Author</span>
-            </td>
-            <td class="border border-indigo-700 hover:bg-indigo-500 p-3 truncate">
-                <span th:text="${book.category()}">Category</span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="content-between flex justify-center w-full">
+        <div
+                class="flex flex-col w-full justify-between whitespace-normal break-words rounded-l-lg bg-indigo-950 p-4 font-sans text-sm font-normal text-blue-gray-500 drop-shadow-2xl shadow-indigo-950/10 focus:outline-none max-w-full h-full"
+        >
+            <div>
+                <label>
+                    <input type="hidden" th:value="${book.id()}" id="bookId">
+                </label>
+                <div class="flex flex-col">
+                    <div class="mb-2 flex items-center gap-3">
+                        <p
+                                class="block font-sans text-base font-medium leading-relaxed tracking-normal text-white antialiased transition-colors hover:text-pink-500"
+                                th:text="${book.title()}"
+                        >
+                            Unknown Book
+                        </p>
+                        <div
+                                class="center relative inline-block select-none whitespace-nowrap rounded-full bg-purple-500 py-1 px-2 align-baseline font-sans text-xs font-medium capitalize leading-none tracking-wide text-white"
 
+                        >
+                            <div class="mt-px" th:text="${book.category()}"> Category</div>
+                        </div>
+                    </div>
+                    <p class="font-sans text-sm font-normal leading-normal text-gray-50"
+                       th:text="${book.description()}">
+                        Description
+                    </p>
+
+                </div>
+
+                <div class=" mt-4 gap-5 flex flex-row">
+                    <div class="flex flex-row gap-1 text-white rounded-2xl bg-blue-400 min-w-fit min-h-[5%] max-h-full">
+                        <span class="pl-2 font-bold ">Code</span>
+                        <span th:text=" ${book.code()}" class="pr-2"></span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16"
+                             viewBox="0 0 512 512" class="mr-1">
+                            <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                            <path fill="#14fc6d"
+                                  d="M278.5 215.6L23 471c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l57-57h68c49.7 0 97.9-14.4 139-41c11.1-7.2 5.5-23-7.8-23c-5.1 0-9.2-4.1-9.2-9.2c0-4.1 2.7-7.6 6.5-8.8l81-24.3c2.5-.8 4.8-2.1 6.7-4l22.4-22.4c10.1-10.1 2.9-27.3-11.3-27.3l-32.2 0c-5.1 0-9.2-4.1-9.2-9.2c0-4.1 2.7-7.6 6.5-8.8l112-33.6c4-1.2 7.4-3.9 9.3-7.7C506.4 207.6 512 184.1 512 160c0-41-16.3-80.3-45.3-109.3l-5.5-5.5C432.3 16.3 393 0 352 0s-80.3 16.3-109.3 45.3L139 149C91 197 64 262.1 64 330v55.3L253.6 195.8c6.2-6.2 16.4-6.2 22.6 0c5.4 5.4 6.1 13.6 2.2 19.8z"/>
+                        </svg>
+                        <p class="block font-sans text-xs font-normal text-gray-50 antialiased"
+                           th:text="${book.author()}">
+                            Author
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <a th:href="@{/delete(code=${book.code})}"
+           class="bg-rose-600 hover:bg-rose-800 rounded-r-lg w-9 flex flex-row justify-center items-center text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512">
+                <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                <path fill="#ffffff"
+                      d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
+            </svg>
+        </a>
+    </div>
 </div>
 </body>
 </html>
