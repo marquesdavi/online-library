@@ -54,8 +54,10 @@ public class BookService {
         }
 
         Map<Integer, Object> result = new HashMap<>();
-        result.put(0, books);
-        result.put(1, pages);
+        if (!books.isEmpty() && !pages.isEmpty()){
+            result.put(0, books);
+            result.put(1, pages);
+        }
         return result;
     }
 

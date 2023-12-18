@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,13 +39,19 @@ public class BookController {
 
         Map<Integer, Object> bookMap = BookService.sizeFilter(bookService.list());
 
-        ArrayList<ArrayList<ArrayList<Book>>> books = (ArrayList<ArrayList<ArrayList<Book>>>) bookMap.get(0);
-        ArrayList<Integer> pages = (ArrayList<Integer>) bookMap.get(1);
+        if (!bookMap.isEmpty()){
+            ArrayList<ArrayList<ArrayList<Book>>> books = (ArrayList<ArrayList<ArrayList<Book>>>) bookMap.get(0);
+            ArrayList<Integer> pages = (ArrayList<Integer>) bookMap.get(1);
 
-        ArrayList<ArrayList<Book>> filteredBooks = new ArrayList<>(books.get(page - 1));
+            ArrayList<ArrayList<Book>> filteredBooks = new ArrayList<>(books.get(page - 1));
 
-        model.addAttribute("books", filteredBooks);
-        model.addAttribute("pages", pages);
+            model.addAttribute("books", filteredBooks);
+            model.addAttribute("pages", pages);
+            model.addAttribute("currentPage", page);
+        }
+        else {
+            return "redirect:/create/form";
+        }
 
         return "book/index";
     }
@@ -59,14 +66,14 @@ public class BookController {
     public String register(RegisterBookDTO book) {
         bookService.createBook(book);
 
-        return "redirect:/";
+        return "redirect:/1";
     }
 
     @GetMapping("/delete")
     public String delete(@RequestParam(name = "code") String code) {
         bookService.delete(code);
 
-        return "redirect:/";
+        return "redirect:/1";
     }
 
     @GetMapping("/update")
@@ -94,14 +101,15 @@ public class BookController {
     ) {
         bookService.update(code, field, fieldValue);
 
-        return "redirect:/";
+        return "redirect:/1";
     }
 
     @GetMapping("/details")
-    public String details(Model model, @RequestParam(name = "code") String code) {
+    public String details(Model model, @RequestParam(name = "code") String code, @RequestParam(name = "rootPage") Integer rootPage) {
         BookResponseDTO responseDTO = bookService.details(code);
 
         model.addAttribute("book", responseDTO);
+        model.addAttribute("rootPage", rootPage);
 
         return "book/details";
     }
