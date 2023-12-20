@@ -1,13 +1,12 @@
 package br.com.online.library.model.Book;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Entity
 @Table(name = "book")
@@ -16,7 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 public class Book {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "title")
     private String title;
@@ -38,21 +37,11 @@ public class Book {
             String author,
             BookCategory category,
             String code
-    ){
+    ) {
         this.title = title;
         this.description = description;
         this.author = author;
         this.category = category;
         this.code = code;
     }
-
-    public String stringMatch(String stringToMatch){
-
-        int tPos = 25;
-        StringBuilder strModel = new StringBuilder();
-
-
-        return strModel.toString();
-    }
-
 }

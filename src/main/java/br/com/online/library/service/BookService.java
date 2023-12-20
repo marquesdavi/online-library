@@ -4,7 +4,10 @@ import br.com.online.library.dto.BookResponseDTO;
 import br.com.online.library.dto.RegisterBookDTO;
 import br.com.online.library.model.Book.Book;
 import br.com.online.library.model.Book.BookCategory;
+import br.com.online.library.model.User.UserEntity;
 import br.com.online.library.repository.IBookRepository;
+import br.com.online.library.repository.IUserRepository;
+import br.com.online.library.security.SecurityUtil;
 import br.com.online.library.util.CodeGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -17,9 +20,11 @@ import java.util.Map;
 @Service
 public class BookService {
     private IBookRepository repository;
+    private IUserRepository userRepository;
 
-    public BookService(IBookRepository repository) {
+    public BookService(IBookRepository repository, IUserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     public static Map<Integer, Object> sizeFilter(ArrayList<Book> items) {
@@ -62,6 +67,9 @@ public class BookService {
     }
 
     public void createBook(RegisterBookDTO book) {
+        String username = SecurityUtil.getSessionUsername();
+        UserEntity user = userRepository.findByUsername(username);
+
         boolean categoryMatch = Arrays
                 .stream(BookCategory.values())
                 .anyMatch(n -> n.toString().equals(book.category()));

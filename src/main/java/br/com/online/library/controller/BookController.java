@@ -4,7 +4,11 @@ import br.com.online.library.dto.BookResponseDTO;
 import br.com.online.library.dto.RegisterBookDTO;
 import br.com.online.library.model.Book.Book;
 import br.com.online.library.model.Book.BookCategory;
+import br.com.online.library.model.User.Role;
+import br.com.online.library.model.User.UserEntity;
+import br.com.online.library.security.SecurityUtil;
 import br.com.online.library.service.BookService;
+import br.com.online.library.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,9 +33,25 @@ public class BookController {
     }
 
     private BookService bookService;
+    private UserService userService;
 
-    public BookController(BookService bookService){
+    public BookController(BookService bookService, UserService userService){
         this.bookService = bookService;
+        this.userService = userService;
+    }
+
+    public void validUser(Model model){
+        UserEntity user = new UserEntity();
+        String username = SecurityUtil.getSessionUsername();
+        Boolean userRole = false;
+
+        if (username != null){
+            user = userService.findByUsername(username);
+            userRole = user.getRoles().stream().anyMatch(role -> role.getName().equals("ADMIN"));
+            model.addAttribute("roleAdmin", userRole);
+        }
+
+        model.addAttribute("roleAdmin", userRole);
     }
 
     @GetMapping("/{page}")
@@ -44,6 +64,8 @@ public class BookController {
             ArrayList<Integer> pages = (ArrayList<Integer>) bookMap.get(1);
 
             ArrayList<ArrayList<Book>> filteredBooks = new ArrayList<>(books.get(page - 1));
+
+            validUser(model);
 
             model.addAttribute("books", filteredBooks);
             model.addAttribute("pages", pages);
@@ -107,6 +129,8 @@ public class BookController {
     @GetMapping("/details")
     public String details(Model model, @RequestParam(name = "code") String code, @RequestParam(name = "rootPage") Integer rootPage) {
         BookResponseDTO responseDTO = bookService.details(code);
+
+        validUser(model);
 
         model.addAttribute("book", responseDTO);
         model.addAttribute("rootPage", rootPage);
