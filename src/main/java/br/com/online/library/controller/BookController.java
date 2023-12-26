@@ -4,6 +4,7 @@ import br.com.online.library.dto.BookResponseDTO;
 import br.com.online.library.dto.RegisterBookDTO;
 import br.com.online.library.model.Book.Book;
 import br.com.online.library.model.Book.BookCategory;
+import br.com.online.library.model.Image.Image;
 import br.com.online.library.model.User.Role;
 import br.com.online.library.model.User.UserEntity;
 import br.com.online.library.security.SecurityUtil;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -86,9 +88,20 @@ public class BookController {
 
     @PostMapping("/create")
     public String register(RegisterBookDTO book) {
-        bookService.createBook(book);
+        var newBook = bookService.createBook(book);
 
-        return "redirect:/1";
+        return String.format("redirect:/image?bookId=%d", newBook.getId());
+    }
+
+    @GetMapping("/image")
+    public String setImageForm(Model model, @RequestParam("bookId") Integer bookId){
+        model.addAttribute("bookId", bookId);
+        return "book/set-image";
+    }
+    @PostMapping("/set/image")
+    public String setImage(){
+
+        return "book/set-image";
     }
 
     @GetMapping("/delete")
@@ -121,6 +134,8 @@ public class BookController {
                              @PathVariable(value = "field") String field,
                              @PathVariable(value = "fieldValue") String fieldValue
     ) {
+
+        System.out.println(fieldValue);
         bookService.update(code, field, fieldValue);
 
         return "redirect:/1";

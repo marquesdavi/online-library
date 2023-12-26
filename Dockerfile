@@ -1,38 +1,34 @@
-FROM ubuntu:latest
-LABEL authors="marquesdavi"
+# Stage 1: Build with Maven
+FROM maven:3.8.4-openjdk-17 AS builder
 
 WORKDIR /app
-ENTRYPOINT ["top", "-b"]
 
-# Stage 1: Build Frontend
-FROM node:16.17.1-slim AS build-node
-WORKDIR /app
-COPY package.json .
-COPY package-lock.json .
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-RUN npm install
-RUN npm install -g nodemon
-COPY . .
-RUN if [ "$NODE_ENV" = "development" ]; then npm run build:development; else npm run build:production; fi
-COPY wait-for-it.sh .
-
-# Stage 2: Build Backend
-FROM openjdk:17-alpine AS build-backend
-WORKDIR /app
+# Copy only the necessary files for dependency download
+COPY mvnw .
+COPY .mvn .mvn
 COPY pom.xml .
-COPY src src
-COPY --from=build-node /app/target/classes/static /app/src/main/resources/static
 
-# Install Maven
-RUN apk add --no-cache maven
+# No need to copy settings.xml
 
-# Run Maven package command
-RUN mvn package -DskipTests -P dev -q
+# Download the dependencies
+RUN mvn dependency:go-offline
 
-# Stage 3: Production Image
-FROM openjdk:17-alpine
+# Copy the entire project
+COPY . .
+
+# Build the application
+RUN mvn package -DskipTests
+
+# Stage 2: Build the final image
+FROM openjdk:17
+
 WORKDIR /app
-COPY --from=build-backend /app/target/*.jar app.jar
+
+# Copy the JAR file from the builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
+# Expose the port the app runs on
 EXPOSE 8080
-ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-jar", "/app/app.jar"]
+
+# Specify the command to run on container start
+CMD ["java", "-jar", "app.jar"]

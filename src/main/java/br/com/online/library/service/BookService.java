@@ -4,27 +4,25 @@ import br.com.online.library.dto.BookResponseDTO;
 import br.com.online.library.dto.RegisterBookDTO;
 import br.com.online.library.model.Book.Book;
 import br.com.online.library.model.Book.BookCategory;
-import br.com.online.library.model.User.UserEntity;
+import br.com.online.library.model.Image.Image;
 import br.com.online.library.repository.IBookRepository;
 import br.com.online.library.repository.IUserRepository;
-import br.com.online.library.security.SecurityUtil;
 import br.com.online.library.util.CodeGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class BookService {
     private IBookRepository repository;
     private IUserRepository userRepository;
+    private ImageService imageService;
 
-    public BookService(IBookRepository repository, IUserRepository userRepository) {
+    public BookService(IBookRepository repository, IUserRepository userRepository, ImageService imageService) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.imageService = imageService;
     }
 
     public static Map<Integer, Object> sizeFilter(ArrayList<Book> items) {
@@ -66,23 +64,21 @@ public class BookService {
         return result;
     }
 
-    public void createBook(RegisterBookDTO book) {
-        String username = SecurityUtil.getSessionUsername();
-        UserEntity user = userRepository.findByUsername(username);
-
+    public Book createBook(RegisterBookDTO book) {
         boolean categoryMatch = Arrays
                 .stream(BookCategory.values())
                 .anyMatch(n -> n.toString().equals(book.category()));
 
-        var newBook = new Book(
-                book.title(),
-                book.description(),
-                book.author(),
-                (categoryMatch ? BookCategory.valueOf(book.category()) : BookCategory.Other),
-                CodeGenerator.newCode()
-        );
+        var newBook = new Book();
+        newBook.setTitle(book.title());
+        newBook.setDescription(book.description());
+        newBook.setSynopsis(book.synopsis());
+        newBook.setAuthor(book.author());
+        var bookCategory = (categoryMatch ? BookCategory.valueOf(book.category()) : BookCategory.OTHER);
+        newBook.setCategory(bookCategory);
+        newBook.setCode(CodeGenerator.newCode());
 
-        repository.save(newBook);
+        return repository.save(newBook);
     }
 
     public ArrayList<Book> list() {
@@ -103,7 +99,13 @@ public class BookService {
         } else if (field.equals("author")) {
             repository.updateAuthorByCode(code, value);
         } else if (field.equals("category")) {
-            repository.updateCategoryByCode(code, value);
+            boolean categoryMatch = Arrays
+                    .stream(BookCategory.values())
+                    .anyMatch(n -> n.toString().equals(value));
+
+            var bookCategory = (categoryMatch ? BookCategory.valueOf(value) : BookCategory.OTHER);
+
+            repository.updateCategoryByCode(code, bookCategory);
         }
     }
 
@@ -114,10 +116,20 @@ public class BookService {
                 book.getId().toString(),
                 book.getTitle(),
                 book.getDescription(),
+                book.getSynopsis(),
                 book.getAuthor(),
-                book.getCategory().toString(),
+                book.getCategory().getName(),
                 book.getCode(),
                 book.getCreatedAt().toString()
         );
+    }
+
+    public Book getById(Integer id){
+        return repository.findBookById(id);
+    }
+
+    @Transactional
+    public void updateImage(Integer id, Image image_id){
+        repository.updateImageById(id, image_id);
     }
 }
