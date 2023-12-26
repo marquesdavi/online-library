@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:x-transition="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>My borrows</title>
     <!-- Adicione o link para o CDN do Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
+          rel="stylesheet">
 
 </head>
 <body class="flex flex-col min-h-screen items-center justify-center bg-gray-900 font-sans">
 
 <div th:insert="fragments/general.html :: navbar"></div>
 
-<main class="mt-28">
+<main class="mt-28 md:mt-0">
     <div th:if="${param.success}" class="bg-transparent text-center fixed top-16 right-0 py-4 lg:px-4" id="successAle">
         <div class="p-2 bg-teal-800 items-center text-teal-100 leading-none rounded-full flex inline-flex" role="alert">
             <span class="flex rounded-full bg-teal-500 uppercase px-2 py-1 text-xs font-bold mr-3">YEAH</span>
@@ -24,39 +25,78 @@
     </div>
 
     <div class="container bg-gray-900 rounded-lg box-border">
-        <div class="text-5xl text-white flex items-center justify-center">My books</div>
+        <div class="text-5xl text-white flex items-center justify-center">My reservations</div>
 
         <div class="container mx-auto p-2">
-            <section class="mt-4">
-                <table th:each="borrow : ${borrows}" class="w-full bg-indigo-900 rounded-lg overflow-hidden shadow-lg my-5">
-                    <thead class="text-white">
-                    <tr th:if="${borrows.isEmpty()}">
-                        <td colspan="6" class="text-center font-bold p-3">You have no borrows</td>
-                    </tr>
-                    <tr class="bg-indigo-700 flex flex-col sm:table-row">
-                        <th class="p-3 text-left">Book ID</th>
-                        <th class="p-3 text-left">Borrow date</th>
-                        <th class="p-3 text-left">Expected return</th>
-                        <th class="p-3 text-left">Return Date</th>
-                    </tr>
-                    </thead>
-                    <tbody class="flex-1 text-white">
-                    <tr class="flex flex-col sm:table-row">
-                        <td class="border border-indigo-700 hover:bg-indigo-500 p-3 truncate">
-                            <span th:text="${borrow.getBookId()}"> BookID </span>
-                        </td>
-                        <td class="border border-indigo-700 hover:bg-indigo-500 p-3 truncate">
-                            <span th:text="${borrow.getBorrowDate()}"> Borrow Date </span>
-                        </td>
-                        <td class="border border-indigo-700 hover:bg-indigo-500 p-3 truncate">
-                            <span th:text="${borrow.getExpectedReturnDate()}"> Expected Return </span>
-                        </td>
-                        <td class="border border-indigo-700 hover:bg-indigo-500 p-3 truncate">
-                            <span th:text="${borrow.getReturnDate()}"> Return date </span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+            <section class="grid grid-cols-1 gap-4 max-w-fit m-5 justify-center ">
+                <div th:each="borrow : ${borrows}" class="content-between shadow-2xl shadow-cyan-950/20 rounded-lg">
+                    <div
+                            class="flex flex-row gap-3 items-center justify-start whitespace-normal break-words border-4 border-opacity-25 border-cyan-300 rounded-lg bg-cyan-950	bg-opacity-25 p-3 font-sans text-sm font-normal text-blue-gray-500 focus:outline-none max-w-full h-full "
+                    >
+                        <div>
+                            <img class="rounded-lg h-auto max-w-[64px] shadow-md shadow-gray-800/20"
+                                 th:src="@{${'/img/display?bookId=' + borrow.getBookId()}}" alt="">
+                        </div>
+                        <div>
+                            <div class="flex flex-col">
+                                <div class="mb-2 flex items-center gap-3">
+                                    <span
+                                            class="block font-sans text-base font-medium leading-relaxed tracking-normal text-white antialiased transition-colors hover:text-pink-500"
+                                            th:text="${book.getById(borrow.getBookId()).getTitle()}"
+                                    >
+                                    </span>
+                                    <div th:if="${borrow.isLate() != true}"
+                                         class="flex flex-row items-center justify-center gap-0.5 px-2 text-center text-emerald-100 rounded-2xl bg-emerald-600 bg-opacity-60 min-w-fit min-h-[5%] max-h-full">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14"
+                                             viewBox="0 0 448 512">
+                                            <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                                            <path fill="#D1FAE5"
+                                                  d="M128 0c17.7 0 32 14.3 32 32V64H288V32c0-17.7 14.3-32 32-32s32 14.3 32 32V64h48c26.5 0 48 21.5 48 48v48H0V112C0 85.5 21.5 64 48 64H96V32c0-17.7 14.3-32 32-32zM0 192H448V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192zM329 305c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-95 95-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L329 305z"/>
+                                        </svg>
+                                        <span class="px-2 font-bold ">Not late</span>
+                                    </div>
+                                    <div th:unless="${borrow.isLate() != true}"
+                                         class="flex flex-row items-center justify-center gap-0.5 px-2 text-center text-rose-100 rounded-2xl bg-rose-600 bg-opacity-60 min-w-fit min-h-[5%] max-h-full">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="15" width="13"
+                                             viewBox="0 0 448 512">
+                                            <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                                            <path fill="#FAD1E5"
+                                                  d="M128 0c17.7 0 32 14.3 32 32V64H288V32c0-17.7 14.3-32 32-32s32 14.3 32 32V64h48c26.5 0 48 21.5 48 48v48H0V112C0 85.5 21.5 64 48 64H96V32c0-17.7 14.3-32 32-32zM0 192H448V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192zM305 305c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47z"/>
+                                        </svg>
+                                        <span class="px-2 font-bold ">Expired</span>
+                                    </div>
+                                </div>
+                                <div class=" mt-4 gap-5 flex flex-row">
+                                    <div class="flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="12"
+                                             viewBox="0 0 384 512">
+                                            <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                                            <path fill="#00FF80" d="M32 0C14.3 0 0 14.3 0 32S14.3 64 32 64V75c0 42.4 16.9 83.1 46.9 113.1L146.7 256 78.9 323.9C48.9 353.9 32 394.6 32 437v11c-17.7 0-32 14.3-32 32s14.3 32 32 32H64 320h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V437c0-42.4-16.9-83.1-46.9-113.1L237.3 256l67.9-67.9c30-30 46.9-70.7 46.9-113.1V64c17.7 0 32-14.3 32-32s-14.3-32-32-32H320 64 32zM288 437v11H96V437c0-25.5 10.1-49.9 28.1-67.9L192 301.3l67.9 67.9c18 18 28.1 42.4 28.1 67.9z"/>
+                                        </svg>
+                                        <p class="block font-sans text-xs font-normal text-gray-50 antialiased"
+                                           th:text="${borrow.getBorrowDate()}">
+                                            BorrowDate
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="12"
+                                             viewBox="0 0 384 512">
+                                            <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                                            <path fill="#FFBC00"
+                                                  d="M32 0C14.3 0 0 14.3 0 32S14.3 64 32 64V75c0 42.4 16.9 83.1 46.9 113.1L146.7 256 78.9 323.9C48.9 353.9 32 394.6 32 437v11c-17.7 0-32 14.3-32 32s14.3 32 32 32H64 320h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V437c0-42.4-16.9-83.1-46.9-113.1L237.3 256l67.9-67.9c30-30 46.9-70.7 46.9-113.1V64c17.7 0 32-14.3 32-32s-14.3-32-32-32H320 64 32zM96 75V64H288V75c0 25.5-10.1 49.9-28.1 67.9L192 210.7l-67.9-67.9C106.1 124.9 96 100.4 96 75z"/>
+                                        </svg>
+                                        <p class="block font-sans text-xs font-normal text-gray-50 antialiased"
+                                           th:text="${borrow.getExpectedReturnDate()}">
+                                            Borrow Date
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </section>
         </div>
     </div>

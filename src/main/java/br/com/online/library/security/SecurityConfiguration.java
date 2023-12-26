@@ -44,6 +44,8 @@ public class SecurityConfiguration {
                                 .requestMatchers("/borrow**").authenticated()
                                 .requestMatchers("/me/borrow").authenticated()
                                 .requestMatchers("/favicon.ico").authenticated()
+                                .requestMatchers("/img/add**").authenticated()
+                                .requestMatchers("/img/display").authenticated()
                                 .anyRequest().authenticated()
                 ).formLogin(formLogin -> formLogin
                         .loginPage("/login")
@@ -61,7 +63,6 @@ public class SecurityConfiguration {
     private void redirectAfterFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         response.sendRedirect("/login-processing");
     }
-
 
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
         builder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());

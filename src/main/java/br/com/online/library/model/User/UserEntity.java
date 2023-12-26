@@ -1,5 +1,6 @@
 package br.com.online.library.model.User;
 
+import br.com.online.library.model.Borrow.Borrow;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,4 @@ public class UserEntity {
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
     )
     private List<Role> roles = new ArrayList<>();
-
-
 }
