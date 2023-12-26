@@ -57,3 +57,7 @@
 
 #### User book reservations:
 ![App Screenshot](doc/borrow/2.png)
+
+## License
+
+Take a look at the project license - 📜 **[MIT](LICENSE.md)**
